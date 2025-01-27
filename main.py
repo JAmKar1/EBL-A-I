@@ -1,7 +1,7 @@
-import telebot #импорт pyTelegramBotAPI 
-from telebot import types #также достанем типы
-import random #рандом обязательно
-import xlrd #библиотка чтения экселевских файлов
+import telebot 
+from telebot import types
+import random
+import xlrd 
 
 bot = telebot.TeleBot('7861059169:AAF04JOLAwld7NYuE8zlioSLEuS2U7aZuyM')
 
@@ -21,7 +21,7 @@ def menu(message):
         if message.text == "🏋🏻‍♂️Пауэрлифтинг и силовые":
             show_powerlifting_options(message)
 
-        elif message.text in ["1. Основы пауэрлифтинга", "2. Программы тренировок", "3. Техника выполнения", "4. Питание для результатов"]:
+        elif message.text in ["🟢Начальный", "🟡Средний", "🔴Высокий", "📚Жимовые раскладки"]:
             send_excel_file(message)
 
         elif message.text == "🔙 Назад":
@@ -30,10 +30,10 @@ def menu(message):
 def show_powerlifting_options(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = [
-        "1. Основы пауэрлифтинга",
-        "2. Программы тренировок",
-        "3. Техника выполнения",
-        "4. Питание для результатов",
+        "🟢Начальный",
+        "🟡Средний",
+        "🔴Высокий",
+        "📚Жимовые раскладки",
         "🔙 Назад"
     ]
     for btn in buttons:
@@ -47,10 +47,10 @@ def show_main_menu(message):
 
 def send_excel_file(message):
     files = {
-        "1. Основы пауэрлифтинга": 'foundations_powerlifting.xlsx',
-        "2. Программы тренировок": 'powerlifting_programs.xlsx',
-        "3. Техника выполнения": 'technique_powerlifting.xlsx',
-        "4. Питание для результатов": 'nutrition_powerlifting.xlsx'
+       "🟢Начальный": 'D:\TelegramBot\BOT\BBB\Пауэр\Начальный.xlsx',
+        "🟡Средний": 'D:\TelegramBot\BOT\BBB\Пауэр\Средний.xlsx',
+        "🔴Высокий": 'D:\TelegramBot\BOT\BBB\Пауэр\Высокий.xlsx',
+        "📚Жимовые раскладки": 'D:\TelegramBot\BOT\BBB\Пауэр\Жимовые раскладки.docx'
     }
     
     file_name = files.get(message.text)
