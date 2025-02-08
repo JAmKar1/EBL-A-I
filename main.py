@@ -37,9 +37,9 @@ def handle_random_training_choice(message):
 def show_powerlifting_options(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = [
-        "🟢Начальный",
-        "🟡Средний",
-        "🔴Высокий",
+        "🟢Начальный.",
+        "🟡Средний.",
+        "🔴Высокий!",
         "📚Жимовые раскладки",
         "🔙 Назад"
     ]
@@ -107,7 +107,7 @@ def send_training_file(message, level, category):
     
     try:
         # Формируем путь к файлу
-        file_name = f"{category_mapping[category]}.docx"
+        file_name = f"{category_mapping[category]}.xlsx"
         file_path = os.path.join(
             RANDOM_TRAINING_PATH,
             level_mapping[level],
@@ -138,8 +138,8 @@ def handle_bodybuilding_women(message):
 def show_men_bodybuilding_options(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = [
-        "🟢Легкий",
-        "🟠Средний",
+        "🟢Легкий.",
+        "🟠Средний.",
         "🔴Высокий.",
         "🔙 Назад"
     ]
@@ -149,15 +149,15 @@ def show_men_bodybuilding_options(message):
 def show_women_bodybuilding_options(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = [
-        "🟢Легкий",
-        "🟠Средний",
+        "🟢Легкий.",
+        "🟠Средний.",
         "🔴Высокий.",
         "🔙 Назад"
     ]
     markup.add(*[types.KeyboardButton(btn) for btn in buttons])
     bot.send_message(message.chat.id, "Выберите уровень бодибилдинга для 👩🏻женщин:", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text in ["🟢Легкий", "🟠Средний", "🔴Высокий."])
+@bot.message_handler(func=lambda message: message.text in ["🟢Легкий.", "🟠Средний.", "🔴Высокий."])
 def handle_bodybuilding_levels(message):
     user_state = user_states.get(message.chat.id, {})
     user_state["level"] = message.text
@@ -187,11 +187,11 @@ def handle_training_scheme(message):
 def send_bodybuilding_file(message, gender, level, scheme):
     file_paths = {
         "🧔🏻Мужчина": {
-            "🟢Легкий": {
+            "🟢Легкий.": {
                 "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 2х2.xlsx',
                 "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 1х3.xlsx'
             },
-            "🟠Средний": {
+            "🟠Средний.": {
                 "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 2х2.xlsx',
                 "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 1х3.xlsx'
             },
@@ -201,11 +201,11 @@ def send_bodybuilding_file(message, gender, level, scheme):
             }
         },
         "👩🏻Женщина": {
-            "🟢Легкий": {
+            "🟢Легкий.": {
                 "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 2х2.xlsx',
                 "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 1х3.xlsx'
             },
-            "🟠Средний": {
+            "🟠Средний.": {
                 "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 2х2.xlsx',
                 "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 1х3.xlsx'
             },
@@ -231,15 +231,15 @@ def send_bodybuilding_file(message, gender, level, scheme):
     finally:
         user_states.pop(message.chat.id, None)
 
-@bot.message_handler(func=lambda message: message.text in ["🟢Начальный", "🟡Средний", "🔴Высокий", "📚Жимовые раскладки"])
+@bot.message_handler(func=lambda message: message.text in ["🟢Начальный!", "🟡Средний!", "🔴Высокий!", "📚Жимовые раскладки"])
 def handle_powerlifting_levels(message):
     send_excel_file(message)
 
 def send_excel_file(message):
     excel_file_paths = {
-        "🟢Начальный": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
-        "🟡Средний": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
-        "🔴Высокий": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
+        "🟢Начальный!": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
+        "🟡Средний!": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
+        "🔴Высокий!": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
         "📚Жимовые раскладки": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
     }
 
@@ -276,3 +276,4 @@ def back_handler(message):
         show_main_menu(message)
 
 bot.polling(none_stop=True)
+
