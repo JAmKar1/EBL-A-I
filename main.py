@@ -4,15 +4,34 @@ import os
 
 bot = telebot.TeleBot('7918889338:AAF2f5gpw2Hp9E_yjRKbeFkNjD4d9giLmPg')
 
-# Храним состояние пользователя
+# Храним состояние пользователя и ID последних сообщений
 user_states = {}
+last_message_ids = {}
 
 # Путь к папке с рандомными тренировками
 RANDOM_TRAINING_PATH = 'D:\\TelegramBot\\BOT\\Random'
 
+def delete_previous_messages(chat_id):
+    """Удаляет предыдущие сообщения бота."""
+    if chat_id in last_message_ids:
+        for msg_id in last_message_ids[chat_id]:
+            try:
+                bot.delete_message(chat_id, msg_id)
+            except Exception as e:
+                print(f"Не удалось удалить сообщение: {e}")
+        last_message_ids[chat_id] = []
+
+def send_message_with_delete(chat_id, text, reply_markup=None):
+    """Отправляет сообщение и удаляет предыдущие."""
+    delete_previous_messages(chat_id)
+    msg = bot.send_message(chat_id, text, reply_markup=reply_markup)
+    if chat_id not in last_message_ids:
+        last_message_ids[chat_id] = []
+    last_message_ids[chat_id].append(msg.message_id)
+
 @bot.message_handler(commands=['start'])
 def start_command(message):
-    bot.send_message(message.chat.id, "🎉 Привет! Добро пожаловать в наш бот по пауэрлифтингу.")
+    send_message_with_delete(message.chat.id, "🎉 Привет! Добро пожаловать в наш бот по пауэрлифтингу.")
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEL_FZnl8N4ENngAmvarOHf0wABn5x9bXgAAjxpAAL9CblIqU6FdSNFcSQ2BA')
     show_main_menu(message)
 
@@ -27,7 +46,7 @@ def show_main_menu(message):
     markup.row(
         types.InlineKeyboardButton("🎲 Рандомные тренировки", callback_data='random_training')
     )
-    bot.send_message(message.chat.id, "Вы в главном меню. Выберите опцию:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Вы в главном меню. Выберите опцию:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'powerlifting')
 def handle_powerlifting_choice(call):
@@ -50,7 +69,7 @@ def show_powerlifting_options(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите одну из тем пауэрлифтинга:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите одну из тем пауэрлифтинга:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'bodybuilding')
 def handle_bodybuilding_choice(call):
@@ -67,7 +86,7 @@ def show_bodybuilding_options(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите раздел бодибилдинга:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите раздел бодибилдинга:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'random_training')
 def handle_random_training_choice(call):
@@ -87,7 +106,7 @@ def show_random_training_levels(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите уровень сложности:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите уровень сложности:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data in ['easy', 'medium', 'hard'])
 def handle_random_level_choice(call):
@@ -120,7 +139,7 @@ def show_training_categories(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите категорию тренировки:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите категорию тренировки:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data in [
     'back_training', 'legs_training', 'arms_training', 'chest_training',
@@ -129,7 +148,7 @@ def show_training_categories(message):
 def handle_training_category(call):
     user_state = user_states.get(call.message.chat.id, {})
     if not user_state.get("training_level"):
-        bot.send_message(call.message.chat.id, "❌ Сначала выберите уровень сложности")
+        send_message_with_delete(call.message.chat.id, "❌ Сначала выберите уровень сложности")
         return show_main_menu(call.message)
     
     category = call.data
@@ -163,11 +182,11 @@ def send_training_file(message, level, category):
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
-                bot.send_message(message.chat.id, f"✅ {category_mapping[category]} - {level_mapping[level]}\nПриятной тренировки!")
+                send_message_with_delete(message.chat.id, f"✅ {category_mapping[category]} - {level_mapping[level]}\nПриятной тренировки!")
         else:
-            bot.send_message(message.chat.id, "⚠️ Файл с тренировкой не найден")
+            send_message_with_delete(message.chat.id, "⚠️ Файл с тренировкой не найден")
     except Exception as e:
-        bot.send_message(message.chat.id, f"❌ Ошибка: {str(e)}")
+        send_message_with_delete(message.chat.id, f"❌ Ошибка: {str(e)}")
     finally:
         user_states.pop(message.chat.id, None)
 
@@ -190,7 +209,7 @@ def show_men_bodybuilding_options(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите уровень бодибилдинга для 🧔🏻мужчин:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите уровень бодибилдинга для 🧔🏻мужчин:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data == 'women')
 def handle_bodybuilding_women(call):
@@ -211,7 +230,7 @@ def show_women_bodybuilding_options(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите уровень бодибилдинга для 👩🏻женщин:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите уровень бодибилдинга для 👩🏻женщин:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data in ['men_easy', 'men_medium', 'men_hard', 'women_easy', 'women_medium', 'women_hard'])
 def handle_bodybuilding_levels(call):
@@ -231,7 +250,7 @@ def show_training_options(message):
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
     )
-    bot.send_message(message.chat.id, "Выберите схему тренировок:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "Выберите схему тренировок:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data in ['2x2', '1x3'])
 def handle_training_scheme(call):
@@ -240,7 +259,7 @@ def handle_training_scheme(call):
     if user_state.get("gender") and user_state.get("level"):
         send_bodybuilding_file(call.message, user_state["gender"], user_state["level"], scheme)
     else:
-        bot.send_message(call.message.chat.id, "Ошибка: Не удалось определить параметры")
+        send_message_with_delete(call.message.chat.id, "Ошибка: Не удалось определить параметры")
         show_main_menu(call.message)
 
 def send_bodybuilding_file(message, gender, level, scheme):
@@ -280,13 +299,13 @@ def send_bodybuilding_file(message, gender, level, scheme):
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
-                bot.send_message(message.chat.id, f"✅ Файл для {gender}, уровень {level}, схема {scheme}")
+                send_message_with_delete(message.chat.id, f"✅ Файл для {gender}, уровень {level}, схема {scheme}")
         else:
-            bot.send_message(message.chat.id, "⚠️ Файл не найден")
+            send_message_with_delete(message.chat.id, "⚠️ Файл не найден")
     except KeyError:
-        bot.send_message(message.chat.id, "❌ Ошибка в параметрах запроса")
+        send_message_with_delete(message.chat.id, "❌ Ошибка в параметрах запроса")
     except Exception as e:
-        bot.send_message(message.chat.id, f"🚨 Ошибка: {str(e)}")
+        send_message_with_delete(message.chat.id, f"🚨 Ошибка: {str(e)}")
     finally:
         user_states.pop(message.chat.id, None)
 
@@ -308,11 +327,11 @@ def send_excel_file(message, level):
         try:
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
-                bot.send_message(message.chat.id, f"Вот файл для раздела: {level}.")
+                send_message_with_delete(message.chat.id, f"Вот файл для раздела: {level}.")
         except Exception as e:
-            bot.send_message(message.chat.id, f"Не удалось отправить файл: {str(e)}")
+            send_message_with_delete(message.chat.id, f"Не удалось отправить файл: {str(e)}")
     else:
-        bot.send_message(message.chat.id, "Файл не найден.")
+        send_message_with_delete(message.chat.id, "Файл не найден.")
 
 @bot.callback_query_handler(func=lambda call: call.data == 'back')
 def back_handler(call):
