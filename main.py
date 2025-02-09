@@ -36,16 +36,16 @@ def handle_powerlifting_choice(call):
 def show_powerlifting_options(message):
     markup = types.InlineKeyboardMarkup()
     markup.row(
-        types.InlineKeyboardButton("🟢 Начальный", callback_data='beginner')
+        types.InlineKeyboardButton("🟢 Начальный", callback_data='Начальный')
     )
     markup.row(
-        types.InlineKeyboardButton("🟡 Средний", callback_data='intermediate')
+        types.InlineKeyboardButton("🟡 Средний", callback_data='Средний')
     )
     markup.row(
-        types.InlineKeyboardButton("🔴 Высокий", callback_data='advanced')
+        types.InlineKeyboardButton("🔴 Высокий", callback_data='Высокий')
     )
     markup.row(
-        types.InlineKeyboardButton("📚 Жимовые раскладки", callback_data='bench_press')
+        types.InlineKeyboardButton("📚 Жимовые раскладки", callback_data='Жимовые раскладки')
     )
     markup.row(
         types.InlineKeyboardButton("🔙 Назад", callback_data='back')
@@ -290,16 +290,16 @@ def send_bodybuilding_file(message, gender, level, scheme):
     finally:
         user_states.pop(message.chat.id, None)
 
-@bot.callback_query_handler(func=lambda call: call.data in ['beginner', 'intermediate', 'advanced', 'bench_press'])
+@bot.callback_query_handler(func=lambda call: call.data in ['Начальный', 'Средний', 'Высокий', 'Жимовые раскладки'])
 def handle_powerlifting_levels(call):
     send_excel_file(call.message, call.data)
 
 def send_excel_file(message, level):
     excel_file_paths = {
-        'beginner': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
-        'intermediate': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
-        'advanced': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
-        'bench_press': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
+        'Начальный': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
+        'Средний': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
+        'Высокий': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
+        'Жимовые раскладки': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
     }
 
     file_path = excel_file_paths.get(level)
@@ -334,4 +334,3 @@ def back_handler(call):
         show_main_menu(call.message)
 
 bot.polling(none_stop=True)
-
