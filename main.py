@@ -1,7 +1,6 @@
 import telebot
 from telebot import types
 import os
-import random
 
 bot = telebot.TeleBot('7918889338:AAF2f5gpw2Hp9E_yjRKbeFkNjD4d9giLmPg')
 
@@ -18,95 +17,142 @@ def start_command(message):
     show_main_menu(message)
 
 def show_main_menu(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("🏋🏻‍♂️Пауэрлифтинг и силовые", "💪🏻Бодибилдинг", "🎲 Рандомные тренировки")
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🏋🏻‍♂️ Пауэрлифтинг", callback_data='powerlifting')
+    )
+    markup.row(
+        types.InlineKeyboardButton("💪🏻 Бодибилдинг", callback_data='bodybuilding')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🎲 Рандомные тренировки", callback_data='random_training')
+    )
     bot.send_message(message.chat.id, "Вы в главном меню. Выберите опцию:", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text == "🏋🏻‍♂️Пауэрлифтинг и силовые")
-def handle_powerlifting_choice(message):
-    show_powerlifting_options(message)
-
-@bot.message_handler(func=lambda message: message.text == "💪🏻Бодибилдинг")
-def handle_bodybuilding_choice(message):
-    show_bodybuilding_options(message)
-
-@bot.message_handler(func=lambda message: message.text == "🎲 Рандомные тренировки")
-def handle_random_training_choice(message):
-    show_random_training_levels(message)
+@bot.callback_query_handler(func=lambda call: call.data == 'powerlifting')
+def handle_powerlifting_choice(call):
+    show_powerlifting_options(call.message)
 
 def show_powerlifting_options(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = [
-        "🟢Начальный.",
-        "🟡Средний.",
-        "🔴Высокий!",
-        "📚Жимовые раскладки",
-        "🔙 Назад"
-    ]
-    markup.add(*[types.KeyboardButton(btn) for btn in buttons])
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🟢 Начальный", callback_data='beginner')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🟡 Средний", callback_data='intermediate')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔴 Высокий", callback_data='advanced')
+    )
+    markup.row(
+        types.InlineKeyboardButton("📚 Жимовые раскладки", callback_data='bench_press')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите одну из тем пауэрлифтинга:", reply_markup=markup)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'bodybuilding')
+def handle_bodybuilding_choice(call):
+    show_bodybuilding_options(call.message)
+
 def show_bodybuilding_options(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("🧔🏻Мужчина", "👩🏻Женщина", "🔙 Назад")
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🧔🏻 Мужчина", callback_data='men')
+    )
+    markup.row(
+        types.InlineKeyboardButton("👩🏻 Женщина", callback_data='women')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите раздел бодибилдинга:", reply_markup=markup)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'random_training')
+def handle_random_training_choice(call):
+    show_random_training_levels(call.message)
+
 def show_random_training_levels(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["🟢Легкий", "🟠Средний", "🔴Высокий", "🔙 Назад"]
-    markup.add(*buttons)
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🟢 Легкий", callback_data='easy')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🟠 Средний", callback_data='medium')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔴 Высокий", callback_data='hard')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите уровень сложности:", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text in ["🟢Легкий", "🟠Средний", "🔴Высокий"])
-def handle_random_level_choice(message):
-    user_states[message.chat.id] = {"training_level": message.text}
-    show_training_categories(message)
+@bot.callback_query_handler(func=lambda call: call.data in ['easy', 'medium', 'hard'])
+def handle_random_level_choice(call):
+    user_states[call.message.chat.id] = {"training_level": call.data}
+    show_training_categories(call.message)
 
 def show_training_categories(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    categories = [
-        "🏋️Спина", "🦵Ноги", "💪Руки",
-        "🏋️♂️Грудь", "🤸Плечи", 
-        "🔥Грудь+Спина", "💥Руки+Плечи",
-        "🔙 Назад"
-    ]
-    markup.add(*categories)
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🏋️ Спина", callback_data='back_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🦵 Ноги", callback_data='legs_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("💪 Руки", callback_data='arms_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🏋️♂️ Грудь", callback_data='chest_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🤸 Плечи", callback_data='shoulders_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔥 Грудь+Спина", callback_data='chest_back_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("💥 Руки+Плечи", callback_data='arms_shoulders_training')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите категорию тренировки:", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text in [
-    "🏋️Спина", "🦵Ноги", "💪Руки",
-    "🏋️♂️Грудь", "🤸Плечи", 
-    "🔥Грудь+Спина", "💥Руки+Плечи"
+@bot.callback_query_handler(func=lambda call: call.data in [
+    'back_training', 'legs_training', 'arms_training', 'chest_training',
+    'shoulders_training', 'chest_back_training', 'arms_shoulders_training'
 ])
-def handle_training_category(message):
-    user_state = user_states.get(message.chat.id, {})
+def handle_training_category(call):
+    user_state = user_states.get(call.message.chat.id, {})
     if not user_state.get("training_level"):
-        bot.send_message(message.chat.id, "❌ Сначала выберите уровень сложности")
-        return show_main_menu(message)
+        bot.send_message(call.message.chat.id, "❌ Сначала выберите уровень сложности")
+        return show_main_menu(call.message)
     
-    category = message.text
-    send_training_file(message, user_state["training_level"], category)
+    category = call.data
+    send_training_file(call.message, user_state["training_level"], category)
 
 def send_training_file(message, level, category):
-    # Маппинг русских названий к английским путям
     category_mapping = {
-        "🏋️Спина": "Back",
-        "🦵Ноги": "Legs",
-        "💪Руки": "Arms",
-        "🏋️♂️Грудь": "Chest",
-        "🤸Плечи": "Shoulders",
-        "🔥Грудь+Спина": "Chest+Back",
-        "💥Руки+Плечи": "Arms+Shoulders"
+        'back_training': "Back",
+        'legs_training': "Legs",
+        'arms_training': "Arms",
+        'chest_training': "Chest",
+        'shoulders_training': "Shoulders",
+        'chest_back_training': "Chest+Back",
+        'arms_shoulders_training': "Arms+Shoulders"
     }
     
     level_mapping = {
-        "🟢Легкий": "Easy",
-        "🟠Средний": "Medium",
-        "🔴Высокий": "Hard"
+        'easy': "Easy",
+        'medium': "Medium",
+        'hard': "Hard"
     }
     
     try:
-        # Формируем путь к файлу
         file_name = f"{category_mapping[category]}.xlsx"
         file_path = os.path.join(
             RANDOM_TRAINING_PATH,
@@ -117,7 +163,7 @@ def send_training_file(message, level, category):
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
-                bot.send_message(message.chat.id, f"✅ {category} - {level}\nПриятной тренировки!")
+                bot.send_message(message.chat.id, f"✅ {category_mapping[category]} - {level_mapping[level]}\nПриятной тренировки!")
         else:
             bot.send_message(message.chat.id, "⚠️ Файл с тренировкой не найден")
     except Exception as e:
@@ -125,93 +171,106 @@ def send_training_file(message, level, category):
     finally:
         user_states.pop(message.chat.id, None)
 
-@bot.message_handler(func=lambda message: message.text == "🧔🏻Мужчина")
-def handle_bodybuilding_men(message):
-    user_states[message.chat.id] = {"gender": "🧔🏻Мужчина"}  
-    show_men_bodybuilding_options(message)
-
-@bot.message_handler(func=lambda message: message.text == "👩🏻Женщина")
-def handle_bodybuilding_women(message):
-    user_states[message.chat.id] = {"gender": "👩🏻Женщина"}  
-    show_women_bodybuilding_options(message)
+@bot.callback_query_handler(func=lambda call: call.data == 'men')
+def handle_bodybuilding_men(call):
+    user_states[call.message.chat.id] = {"gender": "men"}
+    show_men_bodybuilding_options(call.message)
 
 def show_men_bodybuilding_options(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = [
-        "🟢Легкий.",
-        "🟠Средний.",
-        "🔴Высокий.",
-        "🔙 Назад"
-    ]
-    markup.add(*[types.KeyboardButton(btn) for btn in buttons])
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🟢 Легкий", callback_data='men_easy')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🟠 Средний", callback_data='men_medium')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔴 Высокий", callback_data='men_hard')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите уровень бодибилдинга для 🧔🏻мужчин:", reply_markup=markup)
 
+@bot.callback_query_handler(func=lambda call: call.data == 'women')
+def handle_bodybuilding_women(call):
+    user_states[call.message.chat.id] = {"gender": "women"}
+    show_women_bodybuilding_options(call.message)
+
 def show_women_bodybuilding_options(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = [
-        "🟢Легкий.",
-        "🟠Средний.",
-        "🔴Высокий.",
-        "🔙 Назад"
-    ]
-    markup.add(*[types.KeyboardButton(btn) for btn in buttons])
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("🟢 Легкий", callback_data='women_easy')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🟠 Средний", callback_data='women_medium')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔴 Высокий", callback_data='women_hard')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите уровень бодибилдинга для 👩🏻женщин:", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text in ["🟢Легкий.", "🟠Средний.", "🔴Высокий."])
-def handle_bodybuilding_levels(message):
-    user_state = user_states.get(message.chat.id, {})
-    user_state["level"] = message.text
-    user_states[message.chat.id] = user_state
-    show_training_options(message)
+@bot.callback_query_handler(func=lambda call: call.data in ['men_easy', 'men_medium', 'men_hard', 'women_easy', 'women_medium', 'women_hard'])
+def handle_bodybuilding_levels(call):
+    user_state = user_states.get(call.message.chat.id, {})
+    user_state["level"] = call.data
+    user_states[call.message.chat.id] = user_state
+    show_training_options(call.message)
 
 def show_training_options(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = [
-        "📝2х2",
-        "📝1х3",
-        "🔙 Назад"
-    ]
-    markup.add(*[types.KeyboardButton(btn) for btn in buttons])
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("📝 2х2", callback_data='2x2')
+    )
+    markup.row(
+        types.InlineKeyboardButton("📝 1х3", callback_data='1x3')
+    )
+    markup.row(
+        types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+    )
     bot.send_message(message.chat.id, "Выберите схему тренировок:", reply_markup=markup)
 
-@bot.message_handler(func=lambda message: message.text in ["📝2х2", "📝1х3"])
-def handle_training_scheme(message):
-    user_state = user_states.get(message.chat.id, {})
-    scheme = message.text
+@bot.callback_query_handler(func=lambda call: call.data in ['2x2', '1x3'])
+def handle_training_scheme(call):
+    user_state = user_states.get(call.message.chat.id, {})
+    scheme = call.data
     if user_state.get("gender") and user_state.get("level"):
-        send_bodybuilding_file(message, user_state["gender"], user_state["level"], scheme)
+        send_bodybuilding_file(call.message, user_state["gender"], user_state["level"], scheme)
     else:
-        bot.send_message(message.chat.id, "Ошибка: Не удалось определить параметры")
-        show_main_menu(message)
+        bot.send_message(call.message.chat.id, "Ошибка: Не удалось определить параметры")
+        show_main_menu(call.message)
 
 def send_bodybuilding_file(message, gender, level, scheme):
     file_paths = {
-        "🧔🏻Мужчина": {
-            "🟢Легкий.": {
-                "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 2х2.xlsx',
-                "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 1х3.xlsx'
+        "men": {
+            "men_easy": {
+                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 2х2.xlsx',
+                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 1х3.xlsx'
             },
-            "🟠Средний.": {
-                "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 2х2.xlsx',
-                "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 1х3.xlsx'
+            "men_medium": {
+                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 2х2.xlsx',
+                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 1х3.xlsx'
             },
-            "🔴Высокий.": {
-                "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Высокий 2х2.xlsx',
-                "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Высокий 1х3.xlsx'
+            "men_hard": {
+                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Высокий 2х2.xlsx',
+                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Высокий 1х3.xlsx'
             }
         },
-        "👩🏻Женщина": {
-            "🟢Легкий.": {
-                "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 2х2.xlsx',
-                "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 1х3.xlsx'
+        "women": {
+            "women_easy": {
+                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 2х2.xlsx',
+                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 1х3.xlsx'
             },
-            "🟠Средний.": {
-                "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 2х2.xlsx',
-                "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 1х3.xlsx'
+            "women_medium": {
+                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 2х2.xlsx',
+                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 1х3.xlsx'
             },
-            "🔴Высокий.": {
-                "📝2х2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Высокий 2х2.xlsx',
-                "📝1х3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Высокий 1х3.xlsx'
+            "women_hard": {
+                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Высокий 2х2.xlsx',
+                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Высокий 1х3.xlsx'
             }
         }
     }
@@ -221,7 +280,7 @@ def send_bodybuilding_file(message, gender, level, scheme):
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
-                bot.send_message(message.chat.id, f"✅ Файл для {gender.lower()}, уровень {level}, схема {scheme}")
+                bot.send_message(message.chat.id, f"✅ Файл для {gender}, уровень {level}, схема {scheme}")
         else:
             bot.send_message(message.chat.id, "⚠️ Файл не найден")
     except KeyError:
@@ -231,49 +290,48 @@ def send_bodybuilding_file(message, gender, level, scheme):
     finally:
         user_states.pop(message.chat.id, None)
 
-@bot.message_handler(func=lambda message: message.text in ["🟢Начальный!", "🟡Средний!", "🔴Высокий!", "📚Жимовые раскладки"])
-def handle_powerlifting_levels(message):
-    send_excel_file(message)
+@bot.callback_query_handler(func=lambda call: call.data in ['beginner', 'intermediate', 'advanced', 'bench_press'])
+def handle_powerlifting_levels(call):
+    send_excel_file(call.message, call.data)
 
-def send_excel_file(message):
+def send_excel_file(message, level):
     excel_file_paths = {
-        "🟢Начальный!": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
-        "🟡Средний!": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
-        "🔴Высокий!": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
-        "📚Жимовые раскладки": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
+        'beginner': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
+        'intermediate': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
+        'advanced': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
+        'bench_press': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
     }
 
-    selected_level = message.text
-    file_path = excel_file_paths.get(selected_level)
+    file_path = excel_file_paths.get(level)
     
     if file_path and os.path.exists(file_path):
         try:
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
-                bot.send_message(message.chat.id, f"Вот файл для раздела: {selected_level}.")
+                bot.send_message(message.chat.id, f"Вот файл для раздела: {level}.")
         except Exception as e:
             bot.send_message(message.chat.id, f"Не удалось отправить файл: {str(e)}")
     else:
         bot.send_message(message.chat.id, "Файл не найден.")
 
-@bot.message_handler(func=lambda message: message.text == "🔙 Назад")
-def back_handler(message):
-    current_state = user_states.get(message.chat.id, {})
+@bot.callback_query_handler(func=lambda call: call.data == 'back')
+def back_handler(call):
+    current_state = user_states.get(call.message.chat.id, {})
     
     if current_state.get("training_level"):
-        user_states.pop(message.chat.id, None)
-        show_random_training_levels(message)
+        user_states.pop(call.message.chat.id, None)
+        show_random_training_levels(call.message)
     elif "level" in current_state:
-        if current_state.get("gender") == "🧔🏻Мужчина":
-            show_men_bodybuilding_options(message)
+        if current_state.get("gender") == "men":
+            show_men_bodybuilding_options(call.message)
         else:
-            show_women_bodybuilding_options(message)
-        user_states[message.chat.id].pop("level", None)
+            show_women_bodybuilding_options(call.message)
+        user_states[call.message.chat.id].pop("level", None)
     elif "gender" in current_state:
-        show_bodybuilding_options(message)
-        user_states.pop(message.chat.id, None)
+        show_bodybuilding_options(call.message)
+        user_states.pop(call.message.chat.id, None)
     else:
-        show_main_menu(message)
+        show_main_menu(call.message)
 
 bot.polling(none_stop=True)
 
