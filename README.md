@@ -19,13 +19,9 @@
     git clone https://github.com/yourusername/telegram-fitness-bot.git
     cd telegram-fitness-bot
    ```
+2. **Установка зависимостей**
 
-2. **Установите зависимости:**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
+   
 3. **Настройте бота:**
    
     Создайте бота через BotFather и получите токен.
@@ -57,7 +53,7 @@
 
 # Структура проекта
 
-* ```bot.py``` - Основной файл с логикой бота.
+* ```main.py``` - Основной файл с логикой бота.
 
 * ```requirements.txt``` - Список зависимостей.
 
