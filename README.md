@@ -51,6 +51,8 @@
 
 Получите файл с тренировкой или ссылку на гайд.
 
+Обязательно скачайте файлы из данной ссылки (https://drive.google.com/drive/folders/1jOT5sqZA9QwGF3UFHQwUKrprHYh42DRX?usp=sharing).
+
 # Структура проекта
 
 * ```main.py``` - Основной файл с логикой бота.
