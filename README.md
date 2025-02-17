@@ -51,13 +51,11 @@
 
 Получите файл с тренировкой или ссылку на гайд.
 
-Обязательно скачайте файлы из данной ссылки (https://drive.google.com/drive/folders/1jOT5sqZA9QwGF3UFHQwUKrprHYh42DRX?usp=sharing).
+Скачать по ссылке папку в ней будут все необходимые файлы(https://drive.google.com/drive/folders/10PpGMz6r1q8jBEbZU5sdJI5wrV78rZZh?usp=drive_link).
 
 # Структура проекта
 
 * ```main.py``` - Основной файл с логикой бота.
-
-* ```requirements.txt``` - Список зависимостей.
 
 * ```README.md``` - Документация проекта.
 
