@@ -15,11 +15,11 @@ last_message_ids = {}
 RANDOM_TRAINING_PATH = 'D:\\TelegramBot\\BOT\\Random'
 
 
-MASSONABORNIY_GUIDE_URL = "https://telegra.ph/YOUR_MASSONABOR_GUIDE"  
-PROGRESS_GUIDE_URL = "https://telegra.ph/YOUR_PROGRESS_GUIDE"  
-INJURY_GUIDE_URL = "https://telegra.ph/YOUR_INJURY_GUIDE"  
-SPORTPIT_GUIDE_URL = "https://telegra.ph/YOUR_SPORTPIT_GUIDE"  
-INSTRUCTION_URL = "https://telegra.ph/YOUR_INSTRUCTION_URL"  
+MASSONABORNIY_GUIDE_URL = "https://telegra.ph/Hh-06-01-10"  
+PROGRESS_GUIDE_URL = "https://telegra.ph/Progress---ehto-ne-skuchno-s-07-09"  
+INJURY_GUIDE_URL = "https://telegra.ph/Testovyj-dokument-07-09"  
+SPORTPIT_GUIDE_URL = "https://telegra.ph/Sport-pit-07-09"  
+INSTRUCTION_URL = "https://telegra.ph/Instrukciya-k-programmam-bb-11-01"  
 
 
 def delete_previous_messages(chat_id):
@@ -56,7 +56,7 @@ def show_main_menu(message):
     guide_button = types.InlineKeyboardButton("📚 Гайд", callback_data='guide')
 
     markup.add(powerlifting_button, bodybuilding_button, random_training_button, guide_button) 
-    send_message_with_delete(message.chat.id, "⚡️ Выберите категорию тренировок:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "⚡️ Добро пожаловать в бота, в котором вы можете получить тренировку для себя и не платить ни копейки!", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'powerlifting')
@@ -72,7 +72,7 @@ def show_powerlifting_options(message):
     markup.row(types.InlineKeyboardButton("📚 Жимовые раскладки", callback_data='Жимовые раскладки'))
     markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
     send_message_with_delete(message.chat.id,
-                              "🏋🏻‍♂️Пауэрлифтинг: \nℹ️ Программы начального и среднего уровней подходят и мужчинам, и женщинам.  Инструкции внутри файла!",
+                              "🏋🏻‍♂️Пауэрлифтинг: \n\nℹ️ Программы начального и среднего уровней подходят и мужчинам, и женщинам.  Инструкции внутри файла!",
                               reply_markup=markup)
 
 
@@ -87,7 +87,8 @@ def show_bodybuilding_options(message):
     markup.row(types.InlineKeyboardButton("🧔🏻 Мужчина", callback_data='men'))
     markup.row(types.InlineKeyboardButton("👩🏻 Женщина", callback_data='women'))
     markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
-    send_message_with_delete(message.chat.id, "💪🏻Бодибилдинг: Выберите пол:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, 
+                            "💪🏻Бодибилдинг \n\nПрочти инструкцию перед началом! — Выберите пол:", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'random_training')
@@ -101,7 +102,7 @@ def show_random_training_levels(message):
     markup.row(types.InlineKeyboardButton("🟠 Средний", callback_data='medium'))
     markup.row(types.InlineKeyboardButton("🔴 Высокий", callback_data='hard'))
     markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
-    send_message_with_delete(message.chat.id, "🎲 Рандомная тренировка: Выберите сложность:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "🎲 Рандомная тренировка: \n\nВыберите сложность:", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: call.data in ['easy', 'medium', 'hard'])
@@ -120,7 +121,7 @@ def show_training_categories(message):
     markup.row(types.InlineKeyboardButton("🔥 Грудь+Спина", callback_data='chest_back_training'))
     markup.row(types.InlineKeyboardButton("💥 Руки+Плечи", callback_data='arms_shoulders_training'))
     markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
-    send_message_with_delete(message.chat.id, "🎲 Рандомная тренировка: Выберите группу мышц:", reply_markup=markup)
+    send_message_with_delete(message.chat.id, "🎲 Рандомная тренировка: \n\nВыберите группу мышц:", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: call.data in [
@@ -396,4 +397,5 @@ def handle_massonabor_guide(call):
 
 
 bot.polling(none_stop=True)
+
 
