@@ -3,23 +3,30 @@ from telebot import types
 import os
 import logging
 
-
+# Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-bot = telebot.TeleBot('7918889338:AAF2f5gpw2Hp9E_yjRKbeFkNjD4d9giLmPg')  
+# Инициализация бота
+bot = telebot.TeleBot('7918889338:AAF2f5gpw2Hp9E_yjRKbeFkNjD4d9giLmPg')  # Замените на ваш токен
 
+# Базовый путь к директории со скриптом
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Пути к данным
+RANDOM_TRAINING_PATH = os.path.join(BASE_DIR, 'data', 'random_training')
+BODYBUILDING_PATH = os.path.join(BASE_DIR, 'data', 'bodybuilding')
+POWERLIFTING_PATH = os.path.join(BASE_DIR, 'data', 'powerlifting')
+
+# Словари для хранения состояний пользователей и последних сообщений
 user_states = {}
 last_message_ids = {}
 
-RANDOM_TRAINING_PATH = 'D:\\TelegramBot\\BOT\\Random'
-
-
-MASSONABORNIY_GUIDE_URL = "https://telegra.ph/Hh-06-01-10"  
-PROGRESS_GUIDE_URL = "https://telegra.ph/Progress---ehto-ne-skuchno-s-07-09"  
-INJURY_GUIDE_URL = "https://telegra.ph/Testovyj-dokument-07-09"  
-SPORTPIT_GUIDE_URL = "https://telegra.ph/Sport-pit-07-09"  
-INSTRUCTION_URL = "https://telegra.ph/Instrukciya-k-programmam-bb-11-01"  
+# URL гайдов
+MASSONABORNIY_GUIDE_URL = "https://telegra.ph/Hh-06-01-10"
+PROGRESS_GUIDE_URL = "https://telegra.ph/Progress---ehto-ne-skuchno-s-07-09"
+INJURY_GUIDE_URL = "https://telegra.ph/Testovyj-dokument-07-09"
+SPORTPIT_GUIDE_URL = "https://telegra.ph/Sport-pit-07-09"
+INSTRUCTION_URL = "https://telegra.ph/Instrukciya-k-programmam-bb-11-01"
 
 
 def delete_previous_messages(chat_id):
@@ -49,13 +56,13 @@ def start_command(message):
 
 
 def show_main_menu(message):
-    markup = types.InlineKeyboardMarkup(row_width=2)  
+    markup = types.InlineKeyboardMarkup(row_width=2)
     powerlifting_button = types.InlineKeyboardButton("🏋🏻‍♂️ Пауэрлифтинг", callback_data='powerlifting')
     bodybuilding_button = types.InlineKeyboardButton("💪🏻 Бодибилдинг", callback_data='bodybuilding')
     random_training_button = types.InlineKeyboardButton("🎲 Рандомные тренировки", callback_data='random_training')
     guide_button = types.InlineKeyboardButton("📚 Гайд", callback_data='guide')
 
-    markup.add(powerlifting_button, bodybuilding_button, random_training_button, guide_button) 
+    markup.add(powerlifting_button, bodybuilding_button, random_training_button, guide_button)
     send_message_with_delete(message.chat.id, "⚡️ Добро пожаловать в бота, в котором вы можете получить тренировку для себя и не платить ни копейки!", reply_markup=markup)
 
 
@@ -87,7 +94,7 @@ def show_bodybuilding_options(message):
     markup.row(types.InlineKeyboardButton("🧔🏻 Мужчина", callback_data='men'))
     markup.row(types.InlineKeyboardButton("👩🏻 Женщина", callback_data='women'))
     markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
-    send_message_with_delete(message.chat.id, 
+    send_message_with_delete(message.chat.id,
                             "💪🏻Бодибилдинг \n\nПрочти инструкцию перед началом! — Выберите пол:", reply_markup=markup)
 
 
@@ -140,13 +147,13 @@ def handle_training_category(call):
 
 def send_training_file(message, level, category):
     category_mapping = {
-        'back_training': "Back",
-        'legs_training': "Legs",
-        'arms_training': "Arms",
-        'chest_training': "Chest",
-        'shoulders_training': "Shoulders",
-        'chest_back_training': "Chest+Back",
-        'arms_shoulders_training': "Arms+Shoulders"
+        'back_training': "Back.xlsx",
+        'legs_training': "Legs.xlsx",
+        'arms_training': "Arms.xlsx",
+        'chest_training': "Chest.xlsx",
+        'shoulders_training': "Shoulders.xlsx",
+        'chest_back_training': "Chest+Back.xlsx",
+        'arms_shoulders_training': "Arms+Shoulders.xlsx"
     }
 
     level_mapping = {
@@ -156,20 +163,19 @@ def send_training_file(message, level, category):
     }
 
     try:
-        file_name = f"{category_mapping[category]}.xlsx"
+        file_name = category_mapping[category]
         file_path = os.path.join(RANDOM_TRAINING_PATH, level_mapping[level], file_name)
 
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
 
-              
-                markup = types.InlineKeyboardMarkup()
-                markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
+            markup = types.InlineKeyboardMarkup()
+            markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
 
-                send_message_with_delete(message.chat.id,
-                                          f"✅ {category_mapping[category]} - {level_mapping[level]}\nПриятной тренировки!",
-                                          reply_markup=markup)
+            send_message_with_delete(message.chat.id,
+                                      f"✅ {category_mapping[category]} - {level_mapping[level]}\nПриятной тренировки!",
+                                      reply_markup=markup)
         else:
             send_message_with_delete(message.chat.id, "⚠️ Файл с тренировкой не найден")
     except Exception as e:
@@ -241,30 +247,30 @@ def send_bodybuilding_file(message, gender, level, scheme):
     file_paths = {
         "men": {
             "men_easy": {
-                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 2х2.xlsx',
-                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Легкий 1х3.xlsx'
+                "2x2": os.path.join(BODYBUILDING_PATH, 'men_easy_2x2.xlsx'),
+                "1x3": os.path.join(BODYBUILDING_PATH, 'men_easy_1x3.xlsx')
             },
             "men_medium": {
-                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 2х2.xlsx',
-                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Средний 1х3.xlsx'
+                "2x2": os.path.join(BODYBUILDING_PATH, 'men_medium_2x2.xlsx'),
+                "1x3": os.path.join(BODYBUILDING_PATH, 'men_medium_1x3.xlsx')
             },
             "men_hard": {
-                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Высокий 2х2.xlsx',
-                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Мужской Высокий 1х3.xlsx'
+                "2x2": os.path.join(BODYBUILDING_PATH, 'men_hard_2x2.xlsx'),
+                "1x3": os.path.join(BODYBUILDING_PATH, 'men_hard_1x3.xlsx')
             }
         },
         "women": {
             "women_easy": {
-                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 2х2.xlsx',
-                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Легкий 1х3.xlsx'
+                "2x2": os.path.join(BODYBUILDING_PATH, 'women_easy_2x2.xlsx'),
+                "1x3": os.path.join(BODYBUILDING_PATH, 'women_easy_1x3.xlsx')
             },
             "women_medium": {
-                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 2х2.xlsx',
-                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Средний 1х3.xlsx'
+                "2x2": os.path.join(BODYBUILDING_PATH, 'women_medium_2x2.xlsx'),
+                "1x3": os.path.join(BODYBUILDING_PATH, 'women_medium_1x3.xlsx')
             },
             "women_hard": {
-                "2x2": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Высокий 2х2.xlsx',
-                "1x3": 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Женский Высокий 1х3.xlsx'
+                "2x2": os.path.join(BODYBUILDING_PATH, 'women_hard_2x2.xlsx'),
+                "1x3": os.path.join(BODYBUILDING_PATH, 'women_hard_1x3.xlsx')
             }
         }
     }
@@ -275,11 +281,11 @@ def send_bodybuilding_file(message, gender, level, scheme):
             with open(file_path, 'rb') as file:
                 bot.send_document(message.chat.id, file)
 
-                markup = types.InlineKeyboardMarkup()
-                markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
+            markup = types.InlineKeyboardMarkup()
+            markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
 
-                send_message_with_delete(message.chat.id, f"✅ Файл для {gender}, уровень {level}, схема {scheme}",
-                                          reply_markup=markup)
+            send_message_with_delete(message.chat.id, f"✅ Файл для {gender}, уровень {level}, схема {scheme}",
+                                      reply_markup=markup)
         else:
             send_message_with_delete(message.chat.id, "⚠️ Файл не найден")
     except KeyError:
@@ -298,10 +304,10 @@ def handle_powerlifting_levels(call):
 
 def send_excel_file(message, level):
     excel_file_paths = {
-        'Начальный': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Начальный.xlsx',
-        'Средний': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Средний.xlsx',
-        'Высокий': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Высокий.xlsx',
-        'Жимовые раскладки': 'D:\\TelegramBot\\BOT\\BBB\\Пауэр\\Жимовые раскладки.docx'
+        'Начальный': os.path.join(POWERLIFTING_PATH, 'beginner.xlsx'),
+        'Средний': os.path.join(POWERLIFTING_PATH, 'intermediate.xlsx'),
+        'Высокий': os.path.join(POWERLIFTING_PATH, 'advanced.xlsx'),
+        'Жимовые раскладки': os.path.join(POWERLIFTING_PATH, 'bench_program.docx')
     }
 
     file_path = excel_file_paths.get(level)
@@ -397,5 +403,7 @@ def handle_massonabor_guide(call):
 
 
 bot.polling(none_stop=True)
+
+
 
 
