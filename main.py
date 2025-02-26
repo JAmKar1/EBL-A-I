@@ -79,7 +79,7 @@ def show_powerlifting_options(message):
     markup.row(types.InlineKeyboardButton("📚 Жимовые раскладки", callback_data='Жимовые раскладки'))
     markup.row(types.InlineKeyboardButton("🔙 Назад", callback_data='back'))
     send_message_with_delete(message.chat.id,
-                              "🏋🏻‍♂️Пауэрлифтинг: \n\nℹ️ Программы начального и среднего уровней подходят и мужчинам, и женщинам.  Инструкции внутри файла!",
+                              "🏋🏻‍♂️Пауэрлифтинг: \n\nℹ️ Программы начального и среднего уровней подходят и мужчинам, и женщинам!",
                               reply_markup=markup)
 
 
@@ -336,11 +336,13 @@ def handle_guide_choice(call):
 
 def show_guide_options(message):
     markup = types.InlineKeyboardMarkup(row_width=2) 
-    massonabor_button = types.InlineKeyboardButton("💪🏻 Массонабор", callback_data='massonabor_guide')
-    progress_button = types.InlineKeyboardButton("📈 Прогресс", callback_data='progress_guide')
-    injury_button = types.InlineKeyboardButton("🤕 Травмы", callback_data='injury_guide')
-    sportpit_button = types.InlineKeyboardButton("💊 Спортпит", callback_data='sportpit_guide')
+    massonabor_button = types.InlineKeyboardButton("💪🏻 Массонабор", url=MASSONABORNIY_GUIDE_URL)
+    progress_button = types.InlineKeyboardButton("📈 Прогресс", url=PROGRESS_GUIDE_URL)
+    injury_button = types.InlineKeyboardButton("🤕 Травмы", url=INJURY_GUIDE_URL)
+    sportpit_button = types.InlineKeyboardButton("💊 Спортпит", url=SPORTPIT_GUIDE_URL)
     back_button = types.InlineKeyboardButton("🔙 Назад", callback_data='back')
+
+ 
 
     markup.add(massonabor_button, progress_button, injury_button, sportpit_button, back_button) 
 
@@ -403,6 +405,8 @@ def handle_massonabor_guide(call):
 
 
 bot.polling(none_stop=True)
+
+
 
 
 
